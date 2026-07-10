@@ -14,6 +14,14 @@ class AppAssets {
   static const String loadingVertical = 'assets/Vertical_Loading_Screen.webp';
   static const String loadingHorizontal = 'assets/Horizontal_Loading_Screen.webp';
 
+  // Gray-flow status screens (orientation-aware backgrounds).
+  static const String noWifiVertical = 'assets/Vertical_Nowifi_Screen.webp';
+  static const String noWifiHorizontal = 'assets/Horizontal_Nowifi_Screen.webp';
+  static const String notificationsVertical =
+      'assets/Vertical_Notifications_Screen.webp';
+  static const String notificationsHorizontal =
+      'assets/Horizontal_Notifications_Screen.webp';
+
   static const String landingZone = 'assets/volcanic_landing_zone_asset.webp';
 
   static const String coreRed = 'assets/lava_core_asset.webp';

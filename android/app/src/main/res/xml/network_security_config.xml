@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Partners routinely send push URLs and tracking redirects over plain
+    HTTP (afsub.com, track.*, etc.), and Chrome on Android does not block
+    cleartext by default. A "false" base would silently break every
+    cold-start push tap — see gray_part_pitfalls.md §17.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

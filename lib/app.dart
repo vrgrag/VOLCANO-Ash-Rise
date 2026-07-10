@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
 
 import 'core/constants.dart';
-import 'splash/splash_screen.dart';
+import 'gate/boot_gate.dart';
+import 'relay/alert_center.dart';
+import 'relay/locker.dart';
+import 'relay/reach_probe.dart';
+import 'relay/signal_relay.dart';
+import 'relay/verdict_channel.dart';
 
+/// Root widget. Owns the long-lived services and hands them to the boot gate.
 class AshRiseApp extends StatelessWidget {
-  const AshRiseApp({super.key});
+  const AshRiseApp({
+    super.key,
+    required this.locker,
+    required this.reachProbe,
+    required this.signalRelay,
+    required this.verdictChannel,
+    required this.alertCenter,
+  });
+
+  final Locker locker;
+  final ReachProbe reachProbe;
+  final SignalRelay signalRelay;
+  final VerdictChannel verdictChannel;
+  final AlertCenter alertCenter;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +39,13 @@ class AshRiseApp extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      home: const SplashScreen(),
+      home: BootGate(
+        locker: locker,
+        reachProbe: reachProbe,
+        signalRelay: signalRelay,
+        verdictChannel: verdictChannel,
+        alertCenter: alertCenter,
+      ),
     );
   }
 }
