@@ -17,14 +17,14 @@ import '../wire/packed_secrets.dart';
 // is 149 per .cursor/rules/gray_user_agent.mdc; the exact build/patch is
 // unique to this project (149.0.7742.118).
 //
-// ── GAME THEME CATEGORY: crash (no appid/appname suffix) ──
-// The Ash Rise game is a volcanic timing/precision arcade title, not a
-// spinning-reel/roulette slot. Per gray_user_agent.mdc §2 the identity
-// suffix is only appended for SLOT themes and must NOT appear on a crash
-// build. If the partner confirms this is actually a slot placement, flip
-// [_appendSlotIdentity] to true (single-line change) and ship a fresh
-// build — the value is cached server-side per install.
-const bool _appendSlotIdentity = false;
+// ── GAME THEME CATEGORY: slot (appid/appname suffix REQUIRED) ──
+// Ash Rise ships as a slot-styled placement (character-driven promo art,
+// bonus multipliers x100…x1000 on the invite screens, lava/gold slot
+// aesthetic). Per gray_user_agent.mdc §2 the identity suffix must be
+// appended for SLOT themes. Server-side attribution caches the UA per
+// install — if the theme ever flips to crash (rocket/multiplier), set
+// this to false and ship a fresh build.
+const bool _appendSlotIdentity = true;
 
 class AgentClient extends http.BaseClient {
   final http.Client _delegate = http.Client();

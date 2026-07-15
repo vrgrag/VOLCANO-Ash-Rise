@@ -2,7 +2,7 @@ name: ash_rise
 description: "Ash Rise - volcanic precision arcade game"
 publish_to: 'none'
 
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: ^3.10.8
@@ -48,7 +48,12 @@ flutter_launcher_icons:
   android: true
   ios: false
   image_path: "assets/icon2.png"
-  min_sdk_android: 21
-  adaptive_icon_background: "assets/icon2.png"
+  min_sdk_android: 26
+  # Adaptive icons live on a 108dp canvas but launchers mask the outer
+  # ~20% (circle / squircle / teardrop). To keep the character fully
+  # visible under every mask shape we render the character on a solid
+  # lava-red background with a generous inset — the foreground sits
+  # inside the guaranteed 66dp safe zone.
+  adaptive_icon_background: "#7A1A0A"
   adaptive_icon_foreground: "assets/icon2.png"
-  adaptive_icon_foreground_inset: 0
+  adaptive_icon_foreground_inset: 18

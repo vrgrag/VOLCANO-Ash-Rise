@@ -25,8 +25,10 @@ if (hasKeystore) {
 android {
     namespace = "com.ashrise.ashrise"
 
-    // Per TZ §6: targetSdk = 35, minSdk = 30, compileSdk = 36 for plugin
-    // compatibility (gray_part_pitfalls.md §2).
+    // targetSdk = 35, minSdk = 26 (Android 8.0 Oreo — first version with
+    // adaptive icons and notification channels; also the floor for
+    // firebase_messaging), compileSdk = 36 for plugin compatibility
+    // (gray_part_pitfalls.md §2).
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -43,10 +45,10 @@ android {
 
     defaultConfig {
         applicationId = "com.ashrise.ashrise"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     signingConfigs {

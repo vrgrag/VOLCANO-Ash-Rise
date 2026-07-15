@@ -136,7 +136,10 @@ class _BootGateState extends State<BootGate>
     }
     _lift(0.4);
 
-    // A pending push link (cold-start tap) wins over everything.
+    // A pending push link (cold-start tap) wins over everything and must
+    // deep-link straight into the content — never gate it behind the push
+    // invite. Every other resume path defers to shouldOfferPushInvite() so
+    // the 3-day Skip cooldown re-triggers the promo once it elapses.
     final String? pending = await widget.locker.takePendingLink();
     if (pending != null) {
       _lift(1.0);
@@ -151,7 +154,7 @@ class _BootGateState extends State<BootGate>
     if (cached != null && !widget.locker.isLinkStale()) {
       _lift(1.0);
       await _settle();
-      _toRemote(cached, skipInvite: true);
+      _toRemote(cached);
       return;
     }
 
@@ -167,9 +170,9 @@ class _BootGateState extends State<BootGate>
     await _settle();
 
     if (verdict.allowed && verdict.hasLink) {
-      _toRemote(verdict.link!, skipInvite: true);
+      _toRemote(verdict.link!);
     } else if (cached != null) {
-      _toRemote(cached, skipInvite: true);
+      _toRemote(cached);
     } else {
       _toOffline();
     }

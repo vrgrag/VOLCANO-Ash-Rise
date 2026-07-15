@@ -3,4 +3,5 @@
     <!-- Dark charcoal matching AppColors.charcoal so the cold-start window
          never flashes white around the launcher icon (pitfalls §16C). -->
     <color name="launch_background">#FF120A08</color>
+	<color name="ic_launcher_background">#7A1A0A</color>
 </resources>
