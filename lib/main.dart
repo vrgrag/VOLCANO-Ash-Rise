@@ -1,3 +1,4 @@
+import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app.dart';
+import 'bridge/insight.dart';
 import 'relay/agent_client.dart';
 import 'relay/alert_center.dart';
 import 'relay/locker.dart';
@@ -60,11 +62,14 @@ Future<void> main() async {
   final VerdictChannel verdictChannel = VerdictChannel(locker);
   final AlertCenter alertCenter = AlertCenter(locker);
 
-  runApp(AshRiseApp(
-    locker: locker,
-    reachProbe: reachProbe,
-    signalRelay: signalRelay,
-    verdictChannel: verdictChannel,
-    alertCenter: alertCenter,
+  runApp(ClarityWidget(
+    clarityConfig: Insight.config,
+    app: AshRiseApp(
+      locker: locker,
+      reachProbe: reachProbe,
+      signalRelay: signalRelay,
+      verdictChannel: verdictChannel,
+      alertCenter: alertCenter,
+    ),
   ));
 }

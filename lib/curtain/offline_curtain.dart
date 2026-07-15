@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../bridge/insight.dart';
 import '../core/constants.dart';
 import 'lava_button.dart';
 
@@ -26,8 +27,15 @@ class OfflineCurtain extends StatefulWidget {
 class _OfflineCurtainState extends State<OfflineCurtain> {
   bool _busy = false;
 
+  @override
+  void initState() {
+    super.initState();
+    Insight.screen('offline');
+  }
+
   Future<void> _retry() async {
     if (_busy) return;
+    Insight.event('offline_retry');
     setState(() => _busy = true);
     await Future<void>.delayed(const Duration(milliseconds: 600));
     if (!mounted) return;

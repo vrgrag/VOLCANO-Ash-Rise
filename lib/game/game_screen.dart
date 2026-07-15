@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../bridge/insight.dart';
 import '../core/constants.dart';
 import '../core/storage/stats_repository.dart';
 import 'difficulty.dart';
@@ -62,6 +63,7 @@ class _GameScreenState extends State<GameScreen>
   @override
   void initState() {
     super.initState();
+    Insight.screen('game');
     _background =
         _random.nextBool() ? AppAssets.backgroundCave : AppAssets.backgroundTemple;
     _fallController = AnimationController(vsync: this);

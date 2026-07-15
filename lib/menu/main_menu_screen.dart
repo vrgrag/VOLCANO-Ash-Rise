@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../bridge/insight.dart';
 import '../core/constants.dart';
 import '../core/storage/stats_repository.dart';
 import '../game/game_screen.dart';
@@ -24,6 +25,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
   void initState() {
     super.initState();
     _soundEnabled = widget.stats.soundEnabled;
+    Insight.screen('menu');
     _floatController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),

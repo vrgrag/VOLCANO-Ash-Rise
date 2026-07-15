@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../bridge/insight.dart';
 import '../core/constants.dart';
 import '../core/storage/stats_repository.dart';
 import '../curtain/offline_curtain.dart';
@@ -69,6 +70,7 @@ class _BootGateState extends State<BootGate>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat();
+    Insight.screen('loading');
     widget.alertCenter.onTokenRotated = _repostToken;
     _drive();
   }
@@ -142,6 +144,7 @@ class _BootGateState extends State<BootGate>
     // the 3-day Skip cooldown re-triggers the promo once it elapses.
     final String? pending = await widget.locker.takePendingLink();
     if (pending != null) {
+      Insight.event('route_push_link');
       _lift(1.0);
       await _settle();
       _toRemote(pending, skipInvite: true);
@@ -152,6 +155,7 @@ class _BootGateState extends State<BootGate>
 
     // If the cached link is still valid, skip the network entirely.
     if (cached != null && !widget.locker.isLinkStale()) {
+      Insight.event('route_cached_link');
       _lift(1.0);
       await _settle();
       _toRemote(cached);
@@ -184,6 +188,16 @@ class _BootGateState extends State<BootGate>
       locale: locale,
       pushToken: widget.alertCenter.token,
     );
+    Insight.identify(
+      body['af_id']?.toString(),
+      tags: <String, String>{
+        'af_status': body['af_status']?.toString() ?? '',
+        'media_source': body['media_source']?.toString() ?? '',
+        'campaign': body['campaign']?.toString() ?? '',
+        'os': body['os']?.toString() ?? '',
+        'locale': body['locale']?.toString() ?? '',
+      },
+    );
     return widget.verdictChannel.query(body);
   }
 
@@ -202,6 +216,8 @@ class _BootGateState extends State<BootGate>
   // ── Routing ──
 
   Future<void> _goLocal({required double initialLift}) async {
+    Insight.tag('run_mode', 'native');
+    Insight.event('route_native');
     _lift(initialLift);
     // The game is portrait-only.
     await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
@@ -231,8 +247,22 @@ class _BootGateState extends State<BootGate>
   void _toRemote(String link, {bool skipInvite = false}) {
     if (_routed || !mounted) return;
     _routed = true;
+    Insight.tag('run_mode', 'web');
+    Insight.event('route_web');
     final bool offerInvite =
         !skipInvite && widget.locker.shouldOfferPushInvite();
+    if (!offerInvite) {
+      // The push invite is skipped for returning users — classify those
+      // sessions too so `notif_permission` is never blank.
+      Insight.tag(
+        'notif_permission',
+        widget.locker.isPushAllowed()
+            ? 'granted'
+            : widget.locker.isPushBlockedByOs()
+                ? 'os_denied'
+                : 'snoozed',
+      );
+    }
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => offerInvite
@@ -255,6 +285,7 @@ class _BootGateState extends State<BootGate>
   void _toOffline() {
     if (_routed || !mounted) return;
     _routed = true;
+    Insight.event('route_offline');
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => OfflineCurtain(

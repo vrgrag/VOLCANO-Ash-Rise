@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../bridge/insight.dart';
 import '../core/constants.dart';
 import '../relay/alert_center.dart';
 import '../relay/locker.dart';
@@ -21,7 +22,7 @@ import 'web_curtain.dart';
 // shared padding rail, same width, aligned — never staggered.
 // ============================================================
 
-class PushPromptCurtain extends StatelessWidget {
+class PushPromptCurtain extends StatefulWidget {
   const PushPromptCurtain({
     super.key,
     required this.locker,
@@ -35,16 +36,32 @@ class PushPromptCurtain extends StatelessWidget {
   final ReachProbe reachProbe;
   final String contentLink;
 
+  @override
+  State<PushPromptCurtain> createState() => _PushPromptCurtainState();
+}
+
+class _PushPromptCurtainState extends State<PushPromptCurtain> {
+  @override
+  void initState() {
+    super.initState();
+    Insight.screen('push_invite');
+  }
+
   Future<void> _accept(BuildContext context) async {
-    final bool granted = await alertCenter.askPermission();
+    Insight.event('push_invite_accept');
+    final bool granted = await widget.alertCenter.askPermission();
+    Insight.tag('notif_permission', granted ? 'granted' : 'denied');
+    Insight.event(granted ? 'push_granted' : 'push_denied');
     if (!granted) {
-      await locker.writeInviteCooldown(_cooldownTarget());
+      await widget.locker.writeInviteCooldown(_cooldownTarget());
     }
     if (context.mounted) _forward(context);
   }
 
   Future<void> _skip(BuildContext context) async {
-    await locker.writeInviteCooldown(_cooldownTarget());
+    Insight.event('push_invite_skip');
+    Insight.tag('notif_permission', 'skipped');
+    await widget.locker.writeInviteCooldown(_cooldownTarget());
     if (context.mounted) _forward(context);
   }
 
@@ -56,10 +73,10 @@ class PushPromptCurtain extends StatelessWidget {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => WebCurtain(
-          link: contentLink,
-          locker: locker,
-          alertCenter: alertCenter,
-          reachProbe: reachProbe,
+          link: widget.contentLink,
+          locker: widget.locker,
+          alertCenter: widget.alertCenter,
+          reachProbe: widget.reachProbe,
         ),
       ),
     );
